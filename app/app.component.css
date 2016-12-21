@@ -1,0 +1,5 @@
+ .background{
+    background: url(http://localhost:8001/imgs/background.jpg) no-repeat top center fixed;
+    height: auto; 
+    padding-bottom: 18%;
+}

@@ -1,0 +1,70 @@
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+    background-color: rebeccapurple;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+
+.container {
+    padding: 16px;
+    margin-top: 2%;
+    width: 100%;
+}
+.basic {
+  padding: 0;
+}
+.basic md-card-content {
+  padding: 16px;
+}
+.full-width {
+  width: 100%;
+  margin-bottom: 2%;
+}
+
+.card {
+    margin-left: 25%;
+    width: 50%;
+}
+
+.login-ui-messages {
+    margin: 10 25%;
+    bottom: -10;
+    position: relative;
+    width: 50%;
+}
+
+
+/* Landscape phones and down */
+@media (max-width: 480px) { 
+    .container {
+        padding: 16px;
+        margin-top: 1%;
+    }
+
+    .card {
+        margin-left: 0%;
+        width: 100%;
+    }
+
+    .login-ui-messages {
+        margin: 0%;
+        bottom: -10;
+        position: relative;
+        width: 100%;
+    }
+}
