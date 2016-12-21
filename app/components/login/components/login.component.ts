@@ -3,6 +3,9 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 
 import { UserService } from '../services/user.service';
 
+//to display error msgs
+import {AlertComponent } from 'ng2-bootstrap/ng2-bootstrap';
+
 import {Observable} from 'rxjs/Observable';
 
 @Component({
@@ -12,12 +15,11 @@ import {Observable} from 'rxjs/Observable';
 })
 export class LogInComponent implements OnInit {
   @ViewChild('userInput') user: any;
-  @ViewChild('paswInput') password: any;
-
+  model: any= { email: '', psw: '' };
   userError: String = "";
   passError: String = "";
-  msgs: any[] = [];
-  color: String = "";
+  err_msg: String = "";
+  loading: Boolean = false;
 
 	constructor(private route: ActivatedRoute,
     			private router: Router,
@@ -33,8 +35,8 @@ export class LogInComponent implements OnInit {
   logIn(event: any) {
   	console.log("clicked log in");
   	event.preventDefault();
-    let userInput: String = this.user.value;
-    let passInput: String = this.password.value;
+    let userInput: String = this.model.email;
+    let passInput: String = this.model.psw;
     if(userInput == ""){
       this.userError = "please enter username";
     }
@@ -51,20 +53,21 @@ export class LogInComponent implements OnInit {
 
     if(userInput != "" && passInput != ""){
       //change to observable
-      this.loginService.logIn(userInput,passInput).then(auth => {
-                                                                  console.log("auth: " + JSON.stringify(auth));
-                                                                  if(auth){  
-                                                                    this.msgs = [];
-                                                                    //this.router.navigate(['/']);
-                                                                  }
-                                                                })
-                                                                .catch(error => {
-                                                                  console.log("auth: " + JSON.stringify(error));
-                                                                  this.msgs = [];
-                                                                  this.color = "accent";
-                                                                  this.msgs.push({severity:'error', summary:'Error Message', detail: error.json().error.msg});
-                                                                });
-    	
+      this.loading = true;
+      this.loginService.logIn(userInput,passInput).subscribe(auth =>{
+                                                                      this.loading = false;
+                                                                      if(auth){  
+                                                                        this.err_msg = "";
+                                                                        //this.router.navigate(['/']);
+                                                                      }else{
+                                                                         this.err_msg = "Wrong user or password";
+                                                                      }
+                                                                    },
+                                                              error => {
+                                                                this.loading = false;
+                                                                this.err_msg = "Wrong user or password";
+                                                                console.log("Error " + this.err_msg);
+                                                              });
     }
   }
 

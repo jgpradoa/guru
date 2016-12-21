@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http, Response } from '@angular/http';
+import { Headers, Http, Response, RequestOptions } from '@angular/http';
 
-import 'rxjs/add/operator/toPromise';
+import {Observable} from 'rxjs/Observable';
+
+//TODO add angular2-jwt
 
 @Injectable()
 export class UserService {
@@ -10,28 +12,37 @@ export class UserService {
 
   constructor(private http: Http) { }
 
-  logIn(userName: String, pass: String): Promise<boolean>{
-    return this.post(userName, pass);
-  }
-
-  // Update existing Hero
-  private post(userName: String, pass: String): Promise<boolean> {
+  logIn(userName: String, pass: String): Observable<boolean>{
     let headers = new Headers({
       'Content-Type': 'application/json'
     });
-
-    var user = {user: userName, psw: pass};
-
+    let options = new RequestOptions({ headers: headers });
+    var user = {email: userName, password: pass};
+    localStorage.removeItem('auth_t');
     return this.http
-      .post(this.userUrl + "/login", JSON.stringify(user), { headers: headers })
-      .toPromise()
-      .then(res => res.json().data)
+      .post(this.userUrl + "/login", JSON.stringify(user), options)
+      .map(this.extractData)
       .catch(this.handleError);
   }
 
+  private extractData(res: Response) {
+    let body = res.json();
+    console.log("token: " + body.token);
+    console.log("bro: " + body.brother);
+    localStorage.setItem('auth_t', body.token);
+    return true;
+  }
+
   private handleError(error: any): Promise<any> {
-    console.error('An error occurred', error);
-    return Promise.reject(error.message || error);
+    let errMsg: string;
+    if (error instanceof Response) {
+      const body = error.json() || '';
+      const err = body.error || JSON.stringify(body);
+      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+    } else {
+      errMsg = error.message ? error.message : error.toString();
+    }
+    return Promise.reject(errMsg);
   }
 
   logOut(){
